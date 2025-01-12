@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireShell : MonoBehaviour {
+public class FireShell : MonoBehaviour
+{
 
     public GameObject bullet;
     public GameObject turret;
@@ -13,27 +14,31 @@ public class FireShell : MonoBehaviour {
     private float rotSpeed = 5.0f;
     private float moveSpeed = 1.0f;
 
-    static float delayReset = 0.2f;
+    static float delayReset = 0.5f;
     float delay = delayReset;
 
-    void CreateBullet() {
+    void CreateBullet()
+    {
 
         GameObject shell = Instantiate(bullet, turret.transform.position, turret.transform.rotation);
         shell.GetComponent<Rigidbody>().linearVelocity = speed * turretBase.forward;
     }
 
-    float? RotateTurret() {
+    float? RotateTurret()
+    {
 
-        float? angle = CalculateAngle(false);
+        float? angle = CalculateAngle(true);
 
-        if (angle != null) {
+        if (angle != null)
+        {
 
             turretBase.localEulerAngles = new Vector3(360.0f - (float)angle, 0.0f, 0.0f);
         }
         return angle;
     }
 
-    float? CalculateAngle(bool low) {
+    float? CalculateAngle(bool low)
+    {
 
         Vector3 targetDir = enemy.transform.position - this.transform.position;
         float y = targetDir.y;
@@ -43,7 +48,8 @@ public class FireShell : MonoBehaviour {
         float sSqr = speed * speed;
         float underTheSqrRoot = (sSqr * sSqr) - gravity * (gravity * x * x + 2 * y * sSqr);
 
-        if (underTheSqrRoot >= 0.0f) {
+        if (underTheSqrRoot >= 0.0f)
+        {
 
             float root = Mathf.Sqrt(underTheSqrRoot);
             float highAngle = sSqr + root;
@@ -51,11 +57,13 @@ public class FireShell : MonoBehaviour {
 
             if (low) return (Mathf.Atan2(lowAngle, gravity * x) * Mathf.Rad2Deg);
             else return (Mathf.Atan2(highAngle, gravity * x) * Mathf.Rad2Deg);
-        } else
+        }
+        else
             return null;
     }
 
-    void Update() {
+    void Update()
+    {
 
         delay -= Time.deltaTime;
         Vector3 direction = (enemy.transform.position - this.transform.position).normalized;
@@ -63,11 +71,14 @@ public class FireShell : MonoBehaviour {
         this.transform.rotation = Quaternion.Slerp(this.transform.rotation, lookRotation, Time.deltaTime * rotSpeed);
         float? angle = RotateTurret();
 
-        if (angle != null && delay <= 0.0f) {
+        if (angle != null && delay <= 0.0f)
+        {
 
             CreateBullet();
             delay = delayReset;
-        } else {
+        }
+        else
+        {
 
             this.transform.Translate(0.0f, 0.0f, Time.deltaTime * moveSpeed);
         }
